@@ -18,7 +18,7 @@ def num_split(number):
         num_cut.append(number%(10**(i+3))//(10**i))
     return num_cut[::-1]
 
-num_cut=num_split(num)
+num_cut=num_split(abs(num))
 
 #Convert each section to words
 def block_to_sting(block_int):
