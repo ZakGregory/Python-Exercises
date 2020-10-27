@@ -1,59 +1,63 @@
-###########
-#Word list
-num_list= {1:"one",2:"two",3:"three",4:"four",5:"five",6:"six",7:"seven",8:"eight",9:"nine",10:"ten",11:"eleven",12:"twelve",13:"thirteen",15:"fifteen",
+#Word list:
+#Dictionarys of the nane of each unique number and order
+num_list= {0:"",1:"one",2:"two",3:"three",4:"four",5:"five",6:"six",7:"seven",8:"eight",9:"nine",10:"ten",11:"eleven",12:"twelve",13:"thirteen",15:"fifteen",
 20:"twenty",30:"thirty",40:"fourty",50:"fifty",60:"sixty",70:"seventy",80:"eighty",90:"ninty",100:"hunderd"}
 
-order_list={3:"thousand",6:"million",9:"billion",12:"trillion"}
+order_list={0:"", 1:" thousand ",2:" million ",3:" billion ",4:" trillion "}
 
 ############
 #Num Input
-test_num= 1234567890
 
-num = test_num
+num = int(input("Input nuber here: "))
 
-num_cut=[]
+#Split into orders of magnitude
 
-#Split into orders of magnitude MAKE THIS INTO A FUNCTION!
+def num_split(number):
+    num_cut=[]
+    for i in range(0, len(str(number)),3):
+        num_cut.append(number%(10**(i+3))//(10**i))
+    return num_cut[::-1]
 
-#for i in range(0, (len(str(num))+2)//3):
-#    print(i)
-#    num_cut.append()
-
-
-
-print(num%(10**12)//(10**9))
-
-
-num_cut=[math.floor((num/10**9)%10**3),math.floor((num/10**6)%10**3),math.floor((num/10**3)%10**3),math.floor(num%10**3)]
-
-print(num_cut)
-#num_cut=[num%10**12,num%10**9,num%10**6,num%10**3]
-
-
-
-
+num_cut=num_split(num)
 
 #Convert each section to words
-mini_string=""
+def block_to_sting(block_int):
+    block_string=""
+    block_split_1=[block_int//100,block_int%100]
+    
+    if block_split_1[0]!=0:
+        block_string+=num_list[block_split_1[0]]+" hundred "
 
-mini_split=[num_cut[1]//100,num_cut[1]%100]
+    if block_split_1[0]!=0 and block_split_1[1]!=0:
+        block_string+="and "
 
-print(mini_split)
-
-if mini_split[0]!=0:
-    mini_string+=num_list[mini_split[0]]+" hundred "
-
-
-
-if mini_split[1] in num_list:
-    mini_string+=num_list[mini_split[1]]
-else:
-    micro_split=[(mini_split[1]//10)*10,mini_split[1]%10]
-    print(micro_split)
-    mini_string+=num_list[micro_split[0]]+" "+num_list[micro_split[1]]
-
-print(mini_string)
+    if block_split_1[1] in num_list:
+        block_string+=num_list[block_split_1[1]]
+    else:
+        block_split_2=[(block_split_1[1]//10)*10,block_split_1[1]%10]
+        block_string+=num_list[block_split_2[0]]+" "+num_list[block_split_2[1]]
+    return block_string+""
 
 #Add all strings together
+def blocks_to_string():
+    to_string=""
+    for j in range(0, (len(str(num))+2)//3):
+        last_block_string=block_to_sting(num_cut[j])
+        to_string+=last_block_string
+        if last_block_string!= "":
+            to_string+=order_list[(len(str(num))+2)//3-j-1]
+    return to_string
 
-
+#Sort edge cases and output
+num_string=""
+if len(str(num))<=15:  
+    if num==0:
+        num_string="zero"
+    elif num <0:
+        num_string="negative "
+        num_string+=blocks_to_string()
+    else:
+        num_string=blocks_to_string()
+    print(num_string)
+else:
+    print("Number too long")
